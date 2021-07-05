@@ -1,0 +1,2 @@
+get auth token = /authentication/token/obtain/ , args = email, password
+refresh auth token = /authentication/token/refresh/ , args = refresh token
