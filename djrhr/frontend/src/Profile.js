@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect, Fragment, useRef } from 'react'
 import { ContextLibrary, URLContext } from '.';
 
 import Container from '@material-ui/core/Container';
-import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 //MATERIAL UI
@@ -32,16 +31,6 @@ import {
 	Link
   } from "react-router-dom";
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-    },
-    paper: {
-      padding: theme.spacing(2),
-      textAlign: 'center',
-      color: theme.palette.text.secondary,
-    },
-  }));
 
 export default function Profile() {
 
@@ -68,8 +57,6 @@ export default function Profile() {
 		event.preventDefault();
 	};
 
-    const classes = useStyles();
-
     const [user, setUser] = useState("");
 
     const changeInput = (e, arg) => {
@@ -77,7 +64,8 @@ export default function Profile() {
 		arg(e.target.value);
 	};
 
-    const getUserDetails = () => {
+		    
+	const getUserDetails = () => {
         const url = `${baseUrl}/auth/dj-rest-auth/user/`;
         fetch(url, {
             method : "GET",

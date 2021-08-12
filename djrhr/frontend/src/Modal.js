@@ -1,27 +1,28 @@
 import React, {useState, useContext, useEffect} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
+
 import { ContextLibrary } from '.';
 
-const useStyles = makeStyles((theme) => ({
-    modal: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    paper: {
-        backgroundColor: theme.palette.background.paper,
-        border: '2px solid #000',
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing(2, 4, 3),
-    },
-}));
+import Backdrop from '@material-ui/core/Backdrop';
+import Box from '@material-ui/core/Box';
+import Modal from '@material-ui/core/Modal';
+import Fade from '@material-ui/core/Fade';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+
+const style = {
+	position: 'absolute',
+	top: '50%',
+	left: '50%',
+	transform: 'translate(-50%, -50%)',
+	width: 400,
+	bgcolor: 'background.paper',
+	border: '2px solid #000',
+	boxShadow: 24,
+	p: 4,
+  };
 
 export default function TransitionsModal() {
     const context =  useContext(ContextLibrary);
-    const classes = useStyles();
     const [modalOpen, setModalOpen] = useState(false);
     const [modalContent, setModalContent] = useState("");
     const [modalHeader, setModalHeader] = useState("");
@@ -34,26 +35,27 @@ export default function TransitionsModal() {
 
   
 	return (
-		<div>
 		<Modal
 			aria-labelledby="transition-modal-title"
 			aria-describedby="transition-modal-description"
-			className={classes.modal}
 			open={modalOpen}
 			onClose={()=>context.toggleModal()}
 			closeAfterTransition
 			BackdropComponent={Backdrop}
 			BackdropProps={{
-			timeout: 500,
+				timeout: 500,
 			}}
 		>
 			<Fade in={modalOpen}>
-			<div className={classes.paper}>
-				<h2 id="transition-modal-title">{modalHeader}</h2>
-				<p id="transition-modal-description">{modalContent}</p>
-			</div>
+				<Box sx={style}>
+					<Typography id="transition-modal-title" variant="h6" component="h2">
+						{modalHeader}
+					</Typography>
+					<Typography id="transition-modal-description" sx={{ mt: 2 }}>
+						{modalContent}
+					</Typography>
+				</Box>
 			</Fade>
 		</Modal>
-		</div>
-  	);
+	);
 }

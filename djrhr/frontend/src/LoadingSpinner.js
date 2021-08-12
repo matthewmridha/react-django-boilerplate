@@ -2,11 +2,11 @@ import React, { Component, useContext }from 'react';
 import { usePromiseTracker } from "react-promise-tracker";
 import { MoonLoader } from 'react-spinners';
 import { ContextLibrary } from '.';
+import { useTheme } from '@material-ui/core/styles';
 
 export const LoadingSpinner = (props) => {
-    const theme =  useContext(ContextLibrary);
     const { promiseInProgress } = usePromiseTracker();
-
+    const theme = useTheme();
     return (
         <div>
             {
@@ -18,9 +18,11 @@ export const LoadingSpinner = (props) => {
                     justifyContent: "center",
                     alignItems: "center",
                     position: "absolute",
-                    zIndex: "100000000000"
+                    top: 0,
+                    left: 0,
+                    zIndex: 100000000000
                     }}>
-                    <MoonLoader color={theme.data.theme.loaderColor} />
+                    <MoonLoader color={theme.colors.primary} />
                 </div>
             :
                 null

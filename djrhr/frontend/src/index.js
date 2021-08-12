@@ -1,18 +1,43 @@
-import React, {useState, useEffect, createContext} from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import { render } from 'react-dom';
-import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import "regenerator-runtime/runtime";
+
+//MATERIAL UI
+import { createTheme, ThemeProvider, styled } from '@material-ui/core/styles';
+
+//EXPORT CONTEXT
 export const URLContext = createContext('');
 export const ContextLibrary = createContext('');
 
+//IMPORT COMPONENT TO RENDER
+import App from './App';
 
-///// development mode or production mode
+
+//<------------------THEME---------------------->
+const theme = createTheme({
+    colors : {
+        primary: '#264653',
+        secondaryCool: '#2a9d8f',
+        neutral: 'e9c46a',
+        primaryWarm: '#f4a261',
+        secondaryWarm: '#e76f51',
+        danger : '#e76f51',
+    },
+    spinnerSize: '70px',
+    surface : {
+        padding : "25px",
+        margin : "25px"
+    }
+    
+});
+
+// development mode or production mode
 const dev = true;
 let baseUrl = dev === true ? 'http://127.0.0.1:8000' : 'http://127.0.0.1:8000';
 
-const Index = (props) => {
+const Index = ( props ) => {
 
     const defaultAlertSeverity = 'info';
     const defaultAlertMessage = '';
@@ -42,27 +67,20 @@ const Index = (props) => {
             snackbarContent : ""
         },
 
-        theme : {
-            loader : {
-                loaderColor : "#3C787E",
-                loaderSize : "70px"
-            }
-        }
-
-        
     });
 
-    
-    const updateUser = (currentUser=null, access_token="", refresh_token="", access_token_expiry="") => {
-        if(currentUser){
+    //CHECK FOR CREDENTIALS IN LOCAL STORAGE AND UPDATE USER. || SAVE NEW USER IN LOCAL STORAGE. && SET USERNAME WITH NAME OR EMAIL
+    //REMOVES USER TOKENS FROM LOCAL STORAGE IF PASSED WITH CUREENTUSER=NULL
+    const updateUser = ( currentUser=null, access_token="", refresh_token="", access_token_expiry="" ) => {
+        if( currentUser ){
             let username;
-            if (currentUser.first_name && currentUser.last_name){
+            if ( currentUser.first_name && currentUser.last_name ){
                 username = currentUser.first_name + " " + currentUser.last_name;
             }
             else{
                 username = currentUser.email;
             }
-            setState({...state, user : {
+            setState({ ...state, user : {
                 user : currentUser,
                 username : username,
                 loggedIn : true,
@@ -70,10 +88,10 @@ const Index = (props) => {
             }});
             currentUser.access_token=access_token;
             currentUser.refresh_token=refresh_token;
-            currentUser.token_exp=Date.parse(access_token_expiry);
-            localStorage.setItem('user', JSON.stringify(currentUser));
+            currentUser.token_exp=Date.parse( access_token_expiry );
+            localStorage.setItem( 'user', JSON.stringify(currentUser) );
         } else {
-            setState({...state, user : {
+            setState({ ...state, user : {
                 user : null,
                 username : "Guest",
                 loggedIn : false,
@@ -120,6 +138,7 @@ const Index = (props) => {
         return cookieValue;
     }
 
+    //CHECK IF TOKEN IN LOCAL STORAGE, IF TOKEN EXISTS, CHECK EXPIRY, IF TOKEN IS VALID, RETURN ELSE REFRESH TOKEN.
     const tokenValidOrRefresh =  () => {
         const currentUser = localStorage.getItem('user');
         if (currentUser){
@@ -136,7 +155,6 @@ const Index = (props) => {
             updateUser();
             return;
         }
-        
     };
 
     const refreshToken = async () => {
@@ -165,15 +183,16 @@ const Index = (props) => {
         }).catch(error => console.log(error));
     };
 
-    
+    //ALERT COMPONENT sSHOW||HIDE. ARGS=message(string), severity(string, options=error\\warning\\info\\success)
     const toggleAlert = (message='', severity=state.alert.severity) => {
         setState({...state, alert : {
             message : message,
-            severity : severity, //error\\warning\\info\\success
+            severity : severity,
             showAlert : !state.alert.showAlert,
         }});
 	};
 
+    //MODAL COMPONENT SHOW||HIDE. ARGS=header(string), content(string)
     const toggleModal = (header="", content="") => {
         setState({...state, modal : {
             modalHeader : header,
@@ -182,6 +201,7 @@ const Index = (props) => {
         }});
     };
 
+    //SNACKBAR COMPONENT SHOW. ARGS=content(string)
     const openSnackbar = (content="") => {
         setState({...state, snackbar : {
             openSnackbar : true,
@@ -189,6 +209,7 @@ const Index = (props) => {
         }});
       };
     
+    //SNACKBAR COMPONENT HIDE.
     const handleSnackbarClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -217,23 +238,25 @@ const Index = (props) => {
 
     return(
         <CookiesProvider>
+        <ThemeProvider theme={theme}>
         <URLContext.Provider value={baseUrl}>
-            <ContextLibrary.Provider value={{ 
-                data : state, 
-                logout : logout,
-                updateUser : updateUser,
-                toggleAlert : toggleAlert,
-                tokenValidOrRefresh : tokenValidOrRefresh,
-                toggleModal : toggleModal,
-                openSnackbar : openSnackbar,
-                handleSnackbarClose : handleSnackbarClose
-                }}>
-                <BrowserRouter>
-                    <App  />
-                </BrowserRouter>
-            </ContextLibrary.Provider>
+        <ContextLibrary.Provider value={{ 
+            data : state, 
+            logout : logout,
+            updateUser : updateUser,
+            toggleAlert : toggleAlert,
+            tokenValidOrRefresh : tokenValidOrRefresh,
+            toggleModal : toggleModal,
+            openSnackbar : openSnackbar,
+            handleSnackbarClose : handleSnackbarClose,
+        }}>
+        <BrowserRouter>
+            <App  />
+        </BrowserRouter>
+        </ContextLibrary.Provider>
         </URLContext.Provider>
-    </CookiesProvider>
+        </ThemeProvider>
+        </CookiesProvider>
     )
 }
 
